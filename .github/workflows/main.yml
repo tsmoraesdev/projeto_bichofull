@@ -19,7 +19,7 @@ jobs:
           cache: maven
       - name: Build Backend
         run: |
-          cd backprojetobichofull
+          cd backend
           chmod +x mvnw
           ./mvnw package -DskipTests
 
@@ -38,4 +38,3 @@ jobs:
           cd frontend
           npm install
           npm run build
-          

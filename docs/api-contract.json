@@ -3,36 +3,29 @@
     "info": {
         "title": "BichoFull API",
         "version": "1.0.0",
-        "description": "Contrato de comunicação para o Sistema BichoFull [cite: 5]"
+        "description": "Contrato de interface para o sistema BichoFull"
     },
     "paths": {
         "/api/auth/login": {
             "post": {
-                "summary": "Autenticação via JWT (RF02) [cite: 15]",
-                "responses": { "200": { "description": "Token gerado com sucesso" } }
+                "summary": "Autenticação de usuário via JWT (RF02)",
+                "responses": { "200": { "description": "Token gerado" } }
             }
         },
         "/api/bets": {
             "post": {
-                "summary": "Registro de aposta (RF06) ",
+                "summary": "Realizar aposta (RF06)",
                 "responses": {
                     "201": { "description": "Aposta registrada" },
-                    "400": { "description": "Saldo insuficiente (RN03) [cite: 37]" }
+                    "400": { "description": "Saldo insuficiente (RN03)" }
                 }
+            }
+        },
+        "/api/user/balance": {
+            "get": {
+                "summary": "Consultar saldo fictício (RF03)",
+                "responses": { "200": { "description": "Saldo atual" } }
             }
         }
     }
-}
-"get": {
-    "summary": "Consultar saldo fictício (RF03)",
-    "responses": { "200": { "description": "Saldo atual" } }
-}
-}
-}
-}
-}
-}
-}
-}
-}
 }
