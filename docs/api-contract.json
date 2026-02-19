@@ -23,3 +23,16 @@
         }
     }
 }
+"get": {
+    "summary": "Consultar saldo fictício (RF03)",
+    "responses": { "200": { "description": "Saldo atual" } }
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
