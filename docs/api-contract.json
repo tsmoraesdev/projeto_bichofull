@@ -1,0 +1,25 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "BichoFull API",
+        "version": "1.0.0",
+        "description": "Contrato de comunicação para o Sistema BichoFull [cite: 5]"
+    },
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "summary": "Autenticação via JWT (RF02) [cite: 15]",
+                "responses": { "200": { "description": "Token gerado com sucesso" } }
+            }
+        },
+        "/api/bets": {
+            "post": {
+                "summary": "Registro de aposta (RF06) ",
+                "responses": {
+                    "201": { "description": "Aposta registrada" },
+                    "400": { "description": "Saldo insuficiente (RN03) [cite: 37]" }
+                }
+            }
+        }
+    }
+}
