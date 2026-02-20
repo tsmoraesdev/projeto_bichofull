@@ -2,29 +2,55 @@
     "openapi": "3.0.0",
     "info": {
         "title": "BichoFull API",
-        "version": "1.0.0",
-        "description": "Contrato de interface para o sistema BichoFull"
+        "version": "1.1.0",
+        "description": "Contrato de interface completo para o sistema BichoFull (Semana 1)"
     },
     "paths": {
-        "/api/auth/login": {
+        "/api/auth/register": {
             "post": {
-                "summary": "Autenticação de usuário via JWT (RF02)",
-                "responses": { "200": { "description": "Token gerado" } }
+                "summary": "Cadastro de novos usuários ",
+                "description": "Cria um usuário com nome, e-mail e senha, iniciando com saldo de R$ 1.000,00 [cite: 13, 16]",
+                "responses": { "201": { "description": "Usuário criado com sucesso" } }
             }
         },
-        "/api/bets": {
+        "/api/auth/login": {
             "post": {
-                "summary": "Realizar aposta (RF06)",
-                "responses": {
-                    "201": { "description": "Aposta registrada" },
-                    "400": { "description": "Saldo insuficiente (RN03)" }
-                }
+                "summary": "Autenticação via JWT (RF02)",
+                "responses": { "200": { "description": "Token JWT retornado" } }
             }
         },
         "/api/user/balance": {
             "get": {
-                "summary": "Consultar saldo fictício (RF03)",
-                "responses": { "200": { "description": "Saldo atual" } }
+                "summary": "Consulta de saldo atual (RF03/RN03)",
+                "responses": { "200": { "description": "Saldo do usuário" } }
+            }
+        },
+        "/api/animals": {
+            "get": {
+                "summary": "Lista de animais e grupos (RF04)",
+                "description": "Retorna os 25 animais e suas respectivas dezenas [cite: 19, 46]",
+                "responses": { "200": { "description": "Lista de animais" } }
+            }
+        },
+        "/api/bets": {
+            "post": {
+                "summary": "Realizar aposta (RF05/RF06)",
+                "description": "Suporta as modalidades Grupo, Dezena e Milhar [cite: 20]",
+                "responses": {
+                    "201": { "description": "Aposta confirmada" },
+                    "400": { "description": "Saldo insuficiente ou dados inválidos" }
+                }
+            },
+            "get": {
+                "summary": "Histórico de apostas (RF08)",
+                "responses": { "200": { "description": "Lista de apostas realizadas (Ganhos/Perdas)" } }
+            }
+        },
+        "/api/admin/draw": {
+            "post": {
+                "summary": "Simular Sorteio (RF07)",
+                "description": "Gera 5 prêmios de milhares aleatórios ",
+                "responses": { "200": { "description": "Sorteio realizado e saldos atualizados" } }
             }
         }
     }
