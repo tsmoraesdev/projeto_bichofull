@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Banco de Dados MySQL
+  database:
+    image: mysql:8.0
+    container_name: bicho_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: bicho_database  # Nome do banco que será criado automaticamente
+      MYSQL_USER: bicho_user
+      MYSQL_PASSWORD: user_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql # Persiste os dados mesmo se o container parar
+
+  # Backend (Configuração de Desenvolvimento)
+  backend:
+    build: ./backend
+    container_name: bicho_backend
+    volumes:
+      - ./backend:/app # Sincroniza seus arquivos locais com o container
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    tty: true # Mantém o container aberto mesmo se o código estiver incompleto
+
+  # Frontend (Configuração de Desenvolvimento)
+  frontend:
+    build: ./frontend
+    container_name: bicho_frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    tty: true
+
+volumes:
+  db_data:
