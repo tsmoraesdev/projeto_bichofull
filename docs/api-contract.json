@@ -2,55 +2,77 @@
     "openapi": "3.0.0",
     "info": {
         "title": "BichoFull API",
-        "version": "1.1.0",
-        "description": "Contrato de interface  para o sistema BichoFull"
+        "description": "API para o Sistema de Simulação do Jogo do Bicho - Projeto Educacional IFAM Parintins [cite: 4, 5]",
+        "version": "1.0.0"
     },
     "paths": {
-        "/api/auth/register": {
+        "/auth/register": {
             "post": {
-                "summary": "Cadastro de novos usuários ",
-                "description": "Cria um usuário com nome, e-mail e senha, iniciando com saldo de R$ 1.000,00 [cite: 13, 16]",
-                "responses": { "201": { "description": "Usuário criado com sucesso" } }
-            }
-        },
-        "/api/auth/login": {
-            "post": {
-                "summary": "Autenticação via JWT (RF02)",
-                "responses": { "200": { "description": "Token JWT retornado" } }
-            }
-        },
-        "/api/user/balance": {
-            "get": {
-                "summary": "Consulta de saldo atual (RF03/RN03)",
-                "responses": { "200": { "description": "Saldo do usuário" } }
-            }
-        },
-        "/api/animals": {
-            "get": {
-                "summary": "Lista de animais e grupos (RF04)",
-                "description": "Retorna os 25 animais e suas respectivas dezenas [cite: 19, 46]",
-                "responses": { "200": { "description": "Lista de animais" } }
-            }
-        },
-        "/api/bets": {
-            "post": {
-                "summary": "Realizar aposta (RF05/RF06)",
-                "description": "Suporta as modalidades Grupo, Dezena e Milhar [cite: 20]",
+                "summary": "Cadastro de Usuário (RF01)",
+                "description": "Cria um novo usuário com nome, email, senha e saldo inicial de R$ 1.000,00[cite: 13, 16].",
                 "responses": {
-                    "201": { "description": "Aposta confirmada" },
-                    "400": { "description": "Saldo insuficiente ou dados inválidos" }
+                    "201": { "description": "Usuário criado com sucesso." }
                 }
-            },
-            "get": {
-                "summary": "Histórico de apostas (RF08)",
-                "responses": { "200": { "description": "Lista de apostas realizadas (Ganhos/Perdas)" } }
             }
         },
-        "/api/admin/draw": {
+        "/auth/login": {
+            "post": {
+                "summary": "Login (RF02)",
+                "description": "Autentica o usuário e retorna um token JWT.",
+                "responses": {
+                    "200": { "description": "Login realizado, token gerado." }
+                }
+            }
+        },
+        "/user/balance": {
+            "get": {
+                "summary": "Consultar Saldo (RF03)",
+                "description": "Retorna o saldo atual do usuário. O saldo nunca pode ser negativo[cite: 37].",
+                "responses": {
+                    "200": { "description": "Saldo retornado." }
+                }
+            }
+        },
+        "/bets": {
+            "post": {
+                "summary": "Realizar Aposta (RF05, RF06)",
+                "description": "Registra uma aposta nas modalidades Grupo, Dezena ou Milhar. Valida saldo antes de confirmar[cite: 20, 24].",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tipo": { "type": "string", "enum": ["GRUPO", "DEZENA", "MILHAR"] },
+                                    "valor": { "type": "number" },
+                                    "palpite": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": { "description": "Aposta registrada." },
+                    "400": { "description": "Saldo insuficiente." }
+                }
+            }
+        },
+        "/draws/simulate": {
             "post": {
                 "summary": "Simular Sorteio (RF07)",
-                "description": "Gera 5 prêmios de milhares aleatórios ",
-                "responses": { "200": { "description": "Sorteio realizado e saldos atualizados" } }
+                "description": "Gera 5 prêmios de milhares aleatórios (Apenas Admin)[cite: 26].",
+                "responses": {
+                    "200": { "description": "Sorteio processado." }
+                }
+            }
+        },
+        "/user/history": {
+            "get": {
+                "summary": "Histórico de Apostas (RF08)",
+                "description": "Visualização de ganhos e perdas do usuário[cite: 27].",
+                "responses": {
+                    "200": { "description": "Lista de apostas." }
+                }
             }
         }
     }
