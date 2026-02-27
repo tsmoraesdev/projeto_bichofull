@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.infrastructure.security;
+package com.backend.backprojetobichofull.infrastructure.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

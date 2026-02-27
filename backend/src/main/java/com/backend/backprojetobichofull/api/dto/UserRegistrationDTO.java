@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.api.dto;
+package com.backend.backprojetobichofull.api.dto;
 
 import lombok.Getter;
 import lombok.Setter;

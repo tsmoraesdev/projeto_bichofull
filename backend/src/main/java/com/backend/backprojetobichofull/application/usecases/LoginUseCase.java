@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.application.usecases;
+package com.backend.backprojetobichofull.application.usecases;
 
 import com.backend.backprojetobichofull.domain.model.User;
 import com.backend.backprojetobichofull.infrastructure.persistence.UserRepository;
@@ -19,7 +19,6 @@ public class LoginUseCase {
     }
 
     public User execute(String email, String password) {
-        // RF02 - Autenticação
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {

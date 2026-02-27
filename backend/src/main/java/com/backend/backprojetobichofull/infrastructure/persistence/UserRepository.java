@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.infrastructure.persistence;
+package com.backend.backprojetobichofull.infrastructure.persistence;
 
 import com.backend.backprojetobichofull.domain.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

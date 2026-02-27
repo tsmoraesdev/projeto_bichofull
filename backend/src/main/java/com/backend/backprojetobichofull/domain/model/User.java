@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.domain.model;
+package com.backend.backprojetobichofull.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,5 +43,8 @@ public class User {
 
     public void creditarSaldo(BigDecimal valor) {
         this.saldo = this.saldo.add(valor);
+    }
+
+    public String getSenha() {
     }
 }

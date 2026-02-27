@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.application.usecases;
+package com.backend.backprojetobichofull.application.usecases;
 
 import com.backend.backprojetobichofull.domain.model.User;
 import com.backend.backprojetobichofull.infrastructure.persistence.UserRepository;

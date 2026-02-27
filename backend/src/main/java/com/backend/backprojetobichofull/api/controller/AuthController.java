@@ -1,4 +1,4 @@
-package main.java.com.backend.backprojetobichofull.api.controller;
+package com.backend.backprojetobichofull.api.controller;
 
 import com.backend.backprojetobichofull.api.dto.LoginDTO;
 import com.backend.backprojetobichofull.api.dto.UserRegistrationDTO;
