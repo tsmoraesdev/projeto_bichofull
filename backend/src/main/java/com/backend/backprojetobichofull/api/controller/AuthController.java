@@ -5,6 +5,7 @@ import com.backend.backprojetobichofull.api.dto.UserRegistrationDTO;
 import com.backend.backprojetobichofull.application.usecases.LoginUseCase;
 import com.backend.backprojetobichofull.application.usecases.RegisterUserUseCase;
 import com.backend.backprojetobichofull.domain.model.User;
+import com.backend.backprojetobichofull.infrastructure.security.JwtService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +20,15 @@ public class AuthController {
 
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUseCase loginUseCase;
+    private final JwtService jwtService; //
 
-    public AuthController(RegisterUserUseCase registerUserUseCase, LoginUseCase loginUseCase) {
+    public AuthController(RegisterUserUseCase registerUserUseCase,
+                          LoginUseCase loginUseCase,
+                          JwtService jwtService) { //
+
         this.registerUserUseCase = registerUserUseCase;
         this.loginUseCase = loginUseCase;
+        this.jwtService = jwtService; //
     }
 
     @PostMapping("/register")
@@ -32,20 +38,23 @@ public class AuthController {
                 .email(dto.getEmail())
                 .senha(dto.getSenha())
                 .build();
+
         registerUserUseCase.execute(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário registrado com sucesso!");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Usuário registrado com sucesso!");
     }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginDTO dto) {
+
         User user = loginUseCase.execute(dto.getEmail(), dto.getSenha());
-        
+
         String token = jwtService.generateToken(user.getEmail());
-        
+
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         response.put("nome", user.getNome());
-        
+
         return ResponseEntity.ok(response);
     }
 }

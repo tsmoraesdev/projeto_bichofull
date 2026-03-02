@@ -46,5 +46,6 @@ public class User {
     }
 
     public String getSenha() {
+        return null;
     }
 }
