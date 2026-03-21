@@ -1,0 +1,27 @@
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Crie sua conta</h1>
+        <p class="subtitle">Cadastre-se para acessar o BichoFull</p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input id="nome" type="text" formControlName="nome" placeholder="Seu nome" />
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input id="email" type="email" formControlName="email" placeholder="seuemail@gmail.com" />
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input id="senha" type="password" formControlName="senha" placeholder="Digite sua senha" />
+            </div>
+
+            <button type="submit" class="auth-button">Cadastrar</button>
+        </form>
+
+        <p class="auth-footer">Já tem conta? Faça login depois.</p>
+    </div>
+</div>
