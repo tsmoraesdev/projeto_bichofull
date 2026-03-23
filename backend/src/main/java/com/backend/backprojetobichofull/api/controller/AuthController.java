@@ -31,6 +31,12 @@ public class AuthController {
         this.jwtService = jwtService; //
     }
 
+    /*@PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserRegistrationDTO dto) {
+        System.out.println("Senha recebida: " + dto.getSenha());
+        return null;
+    }*/
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegistrationDTO dto) {
         User user = User.builder()
@@ -43,6 +49,8 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Usuário registrado com sucesso!");
     }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginDTO dto) {

@@ -1,0 +1,63 @@
+<section class="page">
+    <div class="page-header">
+        <h1>Perfil</h1>
+        <p>Informações da sua conta e estatísticas gerais.</p>
+    </div>
+
+    <div class="profile-hero">
+        <div class="profile-avatar">
+            {{ usuario.nome.charAt(0) }}
+        </div>
+
+        <div class="profile-main">
+            <h2>{{ usuario.nome }}</h2>
+            <p>{{ usuario.email }}</p>
+            <span>Membro desde {{ usuario.membroDesde }}</span>
+        </div>
+
+        <button class="edit-button">Editar perfil</button>
+    </div>
+
+    <div class="profile-grid">
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Informações da conta</h2>
+                <p>Dados principais do usuário.</p>
+            </div>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <span>Nome</span>
+                    <strong>{{ usuario.nome }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>E-mail</span>
+                    <strong>{{ usuario.email }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Membro desde</span>
+                    <strong>{{ usuario.membroDesde }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel stats-panel">
+            <div class="stat-card">
+                <span>Saldo atual</span>
+                <strong>R$ {{ usuario.saldo | number:'1.2-2' }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Apostas feitas</span>
+                <strong>{{ usuario.apostasFeitas }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Ganhos</span>
+                <strong>{{ usuario.ganhos }}</strong>
+            </div>
+        </div>
+    </div>
+</section>

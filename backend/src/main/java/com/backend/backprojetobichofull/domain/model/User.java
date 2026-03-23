@@ -45,7 +45,4 @@ public class User {
         this.saldo = this.saldo.add(valor);
     }
 
-    public String getSenha() {
-        return null;
     }
-}

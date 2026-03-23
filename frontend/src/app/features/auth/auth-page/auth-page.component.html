@@ -1,0 +1,27 @@
+<div class="auth-wrapper">
+    <div class="auth-shell">
+        <div class="auth-brand">
+
+            <img src="/logo_BichoFull.png" alt="BichoFull Logo" class="logo" />
+
+        </div>
+
+        <div class="auth-tabs">
+            <button class="tab-button" [class.active]="mode === 'login'" (click)="showLogin()">
+        Entrar
+      </button>
+
+            <button class="tab-button" [class.active]="mode === 'register'" (click)="showRegister()">
+        Criar conta
+      </button>
+        </div>
+
+        <div class="auth-content">
+            @if (mode === 'login') {
+            <app-login></app-login>
+            } @else {
+            <app-register></app-register>
+            }
+        </div>
+    </div>
+</div>

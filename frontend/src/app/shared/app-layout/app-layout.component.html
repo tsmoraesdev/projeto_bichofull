@@ -1,0 +1,29 @@
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="/logo_BichoFull.png" alt="BichoFull" class="logo" />
+        </div>
+
+        <nav class="menu">
+            <a routerLink="/dashboard">Dashboard</a>
+            <a routerLink="/bets">Apostas</a>
+            <a routerLink="/results">Resultados</a>
+        </nav>
+    </aside>
+
+    <div class="main-area">
+        <header class="topbar">
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span class="user-name">Tatiane</span>
+                </div>
+
+                <button class="logout-button" (click)="logout()">Sair</button>
+            </div>
+        </header>
+
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+:host {
+    display: block;
+}
+
+.results-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.page-header h1 {
+    margin-bottom: 8px;
+    color: #0f172a;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.page-header p {
+    color: #64748b;
+}
+
+.highlight-card {
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    color: white;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 18px 35px rgba(21, 128, 61, 0.18);
+}
+
+.highlight-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.highlight-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.highlight-header span {
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+.prize-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.prize-card {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+    backdrop-filter: blur(6px);
+}
+
+.prize-card small {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.prize-card strong {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.history-panel {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eef2f7;
+}
+
+.panel-header {
+    margin-bottom: 18px;
+}
+
+.panel-header h2 {
+    margin: 0 0 6px;
+    font-size: 1.3rem;
+    color: #0f172a;
+}
+
+.panel-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.history-item {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.history-top {
+    margin-bottom: 14px;
+    color: #0f172a;
+}
+
+.history-prizes {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.mini-prize {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+}
+
+.mini-prize small {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+}
+
+.mini-prize span {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+@media (max-width: 1100px) {
+    .prize-grid,
+    .history-prizes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .highlight-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .prize-grid,
+    .history-prizes {
+        grid-template-columns: 1fr;
+    }
+}
