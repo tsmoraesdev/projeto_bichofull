@@ -1,0 +1,34 @@
+<section class="inicio-page">
+    <div class="hero-banner">
+        <div class="hero-overlay">
+            <h1>Sua vida pode mudar hoje!</h1>
+        </div>
+    </div>
+
+    <section class="section-block">
+        <h2>Como Funciona?</h2>
+
+        <div class="tipos-grid">
+            <div class="tipo-card" *ngFor="let tipo of tiposAposta">
+                <h3>{{ tipo.titulo }}</h3>
+                <p>{{ tipo.descricao }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block">
+        <h2>Animais e seus números</h2>
+
+        <div class="animais-grid">
+            <div class="animal-card" *ngFor="let animal of animais">
+                <img [src]="animal.imagem" [alt]="animal.nome" class="animal-imagem" />
+
+                <div class="animal-info">
+                    <h3>{{ animal.nome }}</h3>
+                    <p><strong>Grupo:</strong> {{ animal.grupo }}</p>
+                    <p><strong>Dezenas:</strong> {{ animal.dezenas }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

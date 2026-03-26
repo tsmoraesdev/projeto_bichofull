@@ -32,7 +32,7 @@ export class LoginComponent {
     this.authService.login(payload).subscribe({
       next: (res) => {
         this.authService.saveToken(res.token);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/inicio']);
       },
       error: (err) => {
         console.error(err);

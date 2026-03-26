@@ -1,29 +1,23 @@
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="brand">
+    <header class="topbar">
+        <div class="topbar-left">
             <img src="/logo_BichoFull.png" alt="BichoFull" class="logo" />
         </div>
 
-        <nav class="menu">
-            <a routerLink="/dashboard">Dashboard</a>
-            <a routerLink="/bets">Apostas</a>
-            <a routerLink="/results">Resultados</a>
+        <nav class="topbar-menu">
+            <a routerLink="/inicio" routerLinkActive="active">Início</a>
+            <a routerLink="/bets" routerLinkActive="active">Apostar</a>
+            <a routerLink="/results" routerLinkActive="active">Histórico</a>
         </nav>
-    </aside>
 
-    <div class="main-area">
-        <header class="topbar">
-            <div class="topbar-right">
-                <div class="user-info">
-                    <span class="user-name">Tatiane</span>
-                </div>
+        <div class="topbar-right">
+            <button class="profile-button" routerLink="/profile" aria-label="Perfil">
+        <span>◉ Perfil </span>
+      </button>
+        </div>
+    </header>
 
-                <button class="logout-button" (click)="logout()">Sair</button>
-            </div>
-        </header>
-
-        <main class="content">
-            <router-outlet></router-outlet>
-        </main>
-    </div>
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
 </div>
