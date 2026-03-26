@@ -31,7 +31,7 @@ export class RegisterComponent {
     this.authService.register(this.form.getRawValue()).subscribe({
       next: () => {
         alert('Cadastro realizado com sucesso');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/inicio']);
       },
       error: (err) => {
         console.error(err);

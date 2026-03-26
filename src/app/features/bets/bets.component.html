@@ -1,23 +1,28 @@
 <section class="bets-page">
-    <div class="page-header">
-        <h1>Apostas</h1>
-        <p>Crie uma nova aposta e acompanhe seu histórico.</p>
+    <div class="hero">
+        <h1>Usuário, vamos tentar a sorte hoje?</h1>
+
+        <div class="saldo-box">
+            <span>Saldo em conta:</span>
+            <strong>R$ {{ saldo | number:'1.2-2' }}</strong>
+
+            <button class="money-button" (click)="adicionarDinheiro()">
+        + Adicionar dinheiro
+      </button>
+        </div>
     </div>
 
-    <div class="bets-grid">
-
-        <!-- NOVA APOSTA -->
+    <div class="top-grid">
         <div class="panel">
             <div class="panel-header">
                 <h2>Nova aposta</h2>
-                <p>Escolha o tipo, número e valor.</p>
+                <p>Escolha o tipo, o número e o valor.</p>
             </div>
 
-            <form class="bet-form" (ngSubmit)="apostar()">
-
+            <form class="bet-form" (ngSubmit)="registrarAposta()">
                 <div class="form-group">
-                    <label>Tipo de aposta</label>
-                    <select [(ngModel)]="tipoAposta" name="tipoAposta">
+                    <label for="tipo">Tipo de aposta</label>
+                    <select id="tipo" [(ngModel)]="tipoAposta" name="tipoAposta">
             <option value="Grupo">Grupo</option>
             <option value="Dezena">Dezena</option>
             <option value="Milhar">Milhar</option>
@@ -25,65 +30,146 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Número</label>
-                    <input type="text" [(ngModel)]="numero" name="numero" placeholder="Digite o número" />
+                    <label for="numero">Número</label>
+                    <input id="numero" type="text" [(ngModel)]="numero" name="numero" placeholder="Digite o número" />
                 </div>
 
                 <div class="form-group">
-                    <label>Valor</label>
-                    <input type="number" [(ngModel)]="valor" name="valor" placeholder="Digite o valor" />
+                    <label for="valor">Valor</label>
+                    <input id="valor" type="number" [(ngModel)]="valor" name="valor" placeholder="Digite o valor" />
                 </div>
 
-                <button type="submit" class="bet-button">
+                <button type="submit" class="primary-button">
           Registrar aposta
         </button>
             </form>
         </div>
 
-        <!-- RESULTADO DO SORTEIO -->
-        <div class="panel" *ngIf="ultimoSorteio.length > 0">
+        <div class="panel preview-panel">
             <div class="panel-header">
-                <h2>Resultado do sorteio</h2>
-                <p>O sorteio é feito na hora.</p>
+                <h2>Prévia da aposta</h2>
+                <p>Veja o animal e o retorno estimado.</p>
             </div>
 
-            <div class="resultado-grid">
-                <div class="resultado-card" *ngFor="let premio of ultimoSorteio; let i = index">
-                    <small>{{ i + 1 }}º prêmio</small>
-                    <strong>{{ premio }}</strong>
+            <div class="preview-content" *ngIf="animalPreview; else semPreview">
+                <img [src]="animalPreview.imagem" [alt]="animalPreview.nome" class="preview-image" />
+
+                <p>Você está apostando na</p>
+                <h3>{{ animalPreview.nome }}</h3>
+
+                <div class="preview-meta">
+                    <span><strong>Grupo:</strong> {{ animalPreview.grupo }}</span>
+                    <span><strong>Dezenas:</strong> {{ animalPreview.dezenas.join(', ') }}</span>
+                </div>
+
+                <div class="preview-gain">
+                    Sua estimativa de ganho é
+                    <strong>R$ {{ estimativaGanho | number:'1.2-2' }}</strong>
                 </div>
             </div>
 
-            <div class="resultado-final">
-                Resultado: <strong>{{ resultadoAposta }}</strong>
-            </div>
+            <ng-template #semPreview>
+                <div class="preview-empty">
+                    Preencha o tipo e o número da aposta para visualizar o animal correspondente.
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Realizar sorteio de apostas</h2>
+            <p>Marque as apostas que você realmente deseja jogar.</p>
         </div>
 
-        <!-- HISTÓRICO -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>Histórico recente</h2>
-            </div>
+        <div class="empty-state" *ngIf="apostas.length === 0">
+            Nenhuma aposta registrada ainda.
+        </div>
 
-            <div class="bet-list">
-                <div class="bet-item" *ngFor="let aposta of historico">
-                    <div>
+        <div class="apostas-list" *ngIf="apostas.length > 0">
+            <div class="aposta-item" *ngFor="let aposta of apostas">
+                <div class="aposta-left">
+                    <input type="checkbox" [(ngModel)]="aposta.selecionada" [name]="'selecionada_' + aposta.id" />
+
+                    <div class="aposta-info">
                         <strong>{{ aposta.tipo }}</strong>
                         <p>Número: {{ aposta.numero }}</p>
+                        <small>Valor: R$ {{ aposta.valor | number:'1.2-2' }}</small>
                     </div>
+                </div>
 
-                    <div class="bet-meta">
-                        <span>R$ {{ aposta.valor }}</span>
-                        <small [ngClass]="{
-              'status-ganhou': aposta.status === 'Ganhou',
-              'status-perdeu': aposta.status === 'Perdeu'
+                <div class="aposta-right">
+                    <small class="badge" [ngClass]="{
+              'badge-waiting': aposta.status === 'Aguardando',
+              'badge-win': aposta.status === 'Ganhou',
+              'badge-lose': aposta.status === 'Perdeu'
             }">
-              {{ aposta.status }}
-            </small>
-                    </div>
+            {{ aposta.status }}
+          </small>
+
+                    <button class="remove-button" (click)="removerAposta(aposta.id)">
+            Remover
+          </button>
                 </div>
             </div>
         </div>
 
+        <button class="primary-button sortear-button" (click)="sortear()">
+      Sortear
+    </button>
     </div>
+
+    <div class="panel" *ngIf="ultimoSorteio.length > 0">
+        <div class="panel-header">
+            <h2>Resultado do sorteio</h2>
+            <p>Confira os números sorteados e o resultado das suas apostas.</p>
+        </div>
+
+        <div class="resultado-grid">
+            <div class="resultado-card" *ngFor="let premio of ultimoSorteio; let i = index">
+                <small>{{ i + 1 }}º prêmio</small>
+                <strong>{{ premio }}</strong>
+            </div>
+        </div>
+
+        <div class="resultado-final">
+            {{ mensagemResultado }}
+        </div>
+    </div>
+</section> <strong>{{ premio }}</strong>
+</div>
+</div>
+
+<div class="resultado-final">
+    {{ mensagemResultado }}
+</div>
+</div>
+</section>
+</section>lass="resultado-final"> {{ mensagemResultado }}
+</div>
+</div>
+</section>
+
+<div class="panel" *ngIf="ultimoSorteio.length > 0">
+    <div class="panel-header">
+        <h2>Resultado do sorteio</h2>
+        <p>Confira os números sorteados e o resultado das suas apostas.</p>
+    </div>
+
+    <div class="resultado-grid">
+        <div class="resultado-card" *ngFor="let premio of ultimoSorteio; let i = index">
+            <small>{{ i + 1 }}º prêmio</small>
+            <strong>{{ premio }}</strong>
+        </div>
+    </div>
+
+    <div class="resultado-final">
+        {{ mensagemResultado }}
+    </div>
+</div>
+</section>
+</section>lass="resultado-final"> {{ mensagemResultado }}
+</div>
+</section>
+</div>
 </section>
