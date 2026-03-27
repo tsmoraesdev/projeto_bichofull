@@ -11,8 +11,8 @@
         </nav>
 
         <div class="topbar-right">
-            <button class="profile-button" routerLink="/profile" aria-label="Perfil">
-        <span>◉ Perfil </span>
+            <button class="profile-button" (click)="abrirModalPerfil()">
+        Perfil
       </button>
         </div>
     </header>
@@ -20,4 +20,37 @@
     <main class="content">
         <router-outlet></router-outlet>
     </main>
+
+    <!-- MODAL PERFIL ENXUTO -->
+    <div class="modal-overlay" *ngIf="modalPerfilAberto" (click)="fecharModalPerfil()">
+        <div class="profile-modal" (click)="$event.stopPropagation()">
+            <button class="close-button" (click)="fecharModalPerfil()">×</button>
+
+            <div class="profile-header">
+                <div class="avatar">
+                    {{ usuario.nome.charAt(0) }}
+                </div>
+
+                <h2>{{ usuario.nome }}</h2>
+                <p>{{ usuario.email }}</p>
+            </div>
+
+            <div class="profile-summary">
+                <div class="summary-card">
+                    <span>Saldo atual</span>
+                    <strong>R$ {{ usuario.saldo | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="secondary-button" routerLink="/profile" (click)="fecharModalPerfil()">
+          Ver perfil
+        </button>
+
+                <button class="logout-button" (click)="logout()">
+          Sair
+        </button>
+            </div>
+        </div>
+    </div>
 </div>

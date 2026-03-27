@@ -1,7 +1,7 @@
-<section class="page">
+<section class="profile-page">
     <div class="page-header">
         <h1>Perfil</h1>
-        <p>Informações da sua conta e estatísticas gerais.</p>
+        <p>Informações completas da sua conta.</p>
     </div>
 
     <div class="profile-hero">
@@ -14,15 +14,13 @@
             <p>{{ usuario.email }}</p>
             <span>Membro desde {{ usuario.membroDesde }}</span>
         </div>
-
-        <button class="edit-button">Editar perfil</button>
     </div>
 
     <div class="profile-grid">
         <div class="panel">
             <div class="panel-header">
-                <h2>Informações da conta</h2>
-                <p>Dados principais do usuário.</p>
+                <h2>Dados pessoais</h2>
+                <p>Informações principais da conta.</p>
             </div>
 
             <div class="info-list">
@@ -37,27 +35,66 @@
                 </div>
 
                 <div class="info-item">
+                    <span>Telefone</span>
+                    <strong>{{ usuario.telefone }}</strong>
+                </div>
+
+                <div class="info-item">
                     <span>Membro desde</span>
                     <strong>{{ usuario.membroDesde }}</strong>
                 </div>
             </div>
         </div>
 
-        <div class="panel stats-panel">
-            <div class="stat-card">
-                <span>Saldo atual</span>
-                <strong>R$ {{ usuario.saldo | number:'1.2-2' }}</strong>
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Resumo da conta</h2>
+                <p>Estatísticas do seu perfil.</p>
             </div>
 
-            <div class="stat-card">
-                <span>Apostas feitas</span>
-                <strong>{{ usuario.apostasFeitas }}</strong>
-            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span>Saldo atual</span>
+                    <strong>R$ {{ usuario.saldo | number:'1.2-2' }}</strong>
+                </div>
 
-            <div class="stat-card">
-                <span>Ganhos</span>
-                <strong>{{ usuario.ganhos }}</strong>
+                <div class="stat-card">
+                    <span>Apostas feitas</span>
+                    <strong>{{ usuario.apostasFeitas }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Ganhos</span>
+                    <strong>{{ usuario.ganhos }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Perdas</span>
+                    <strong>{{ usuario.perdas }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Total ganho</span>
+                    <strong>R$ {{ usuario.totalGanho | number:'1.2-2' }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Total perdido</span>
+                    <strong>R$ {{ usuario.totalPerdido | number:'1.2-2' }}</strong>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Ações da conta</h2>
+            <p>Gerencie suas informações.</p>
+        </div>
+
+        <div class="actions-grid">
+            <button class="secondary-button">Editar informações</button>
+            <button class="secondary-button">Alterar senha</button>
         </div>
     </div>
 </section>

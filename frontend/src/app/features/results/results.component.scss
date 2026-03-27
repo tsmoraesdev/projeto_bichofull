@@ -2,156 +2,212 @@
     display: block;
 }
 
-.results-page {
+.history-page {
+    padding: 24px;
+    background: #dff2da;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
 .page-header h1 {
-    margin-bottom: 8px;
-    color: #0f172a;
     font-size: 2rem;
     font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
 }
 
 .page-header p {
-    color: #64748b;
+    color: #6b7280;
 }
 
-.highlight-card {
-    background: linear-gradient(135deg, #15803d, #22c55e);
-    color: white;
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: 0 18px 35px rgba(21, 128, 61, 0.18);
-}
-
-.highlight-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.highlight-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.highlight-header span {
-    font-size: 0.95rem;
-    opacity: 0.95;
-}
-
-.prize-grid {
+.summary-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
-.prize-card {
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 18px;
-    padding: 18px;
-    text-align: center;
-    backdrop-filter: blur(6px);
-}
-
-.prize-card small {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    opacity: 0.9;
-}
-
-.prize-card strong {
-    font-size: 1.4rem;
-    font-weight: 800;
-}
-
-.history-panel {
+.summary-card {
     background: white;
-    border-radius: 24px;
-    padding: 24px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
-    border: 1px solid #eef2f7;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card .label {
+    display: block;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.summary-card strong {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.summary-card small {
+    color: #6b7280;
+}
+
+.gain-card strong {
+    color: #15803d;
+}
+
+.loss-card strong {
+    color: #dc2626;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 22px;
+}
+
+.panel {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
 }
 
 .panel-header {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .panel-header h2 {
-    margin: 0 0 6px;
-    font-size: 1.3rem;
-    color: #0f172a;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
 }
 
 .panel-header p {
-    margin: 0;
-    color: #64748b;
+    color: #6b7280;
+    font-size: 0.92rem;
 }
 
-.history-list {
+.bet-history-list,
+.draw-history-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-}
-
-.history-item {
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 18px;
-    padding: 18px;
-}
-
-.history-top {
-    margin-bottom: 14px;
-    color: #0f172a;
-}
-
-.history-prizes {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
 }
 
-.mini-prize {
-    background: white;
+.bet-history-item,
+.draw-history-item {
+    background: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 14px;
+    padding: 14px;
+}
+
+.bet-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.bet-main strong {
+    display: block;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.bet-main p,
+.bet-main small {
+    color: #6b7280;
+    margin: 2px 0;
+}
+
+.bet-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.bet-side span {
+    font-weight: 700;
+    color: #111827;
+}
+
+.status-badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.status-win {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-loss {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.prize-value {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.draw-top {
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.draw-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.draw-card {
+    background: white;
+    border-radius: 12px;
     padding: 12px;
     text-align: center;
+    border: 1px solid #e5e7eb;
 }
 
-.mini-prize small {
+.draw-card small {
     display: block;
     margin-bottom: 6px;
-    color: #64748b;
+    color: #6b7280;
 }
 
-.mini-prize span {
-    font-weight: 700;
-    color: #0f172a;
+.draw-card strong {
+    color: #111827;
+    font-size: 1rem;
 }
 
-@media (max-width: 1100px) {
-    .prize-grid,
-    .history-prizes {
+@media (max-width: 950px) {
+    .summary-grid,
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .bet-history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .bet-side {
+        align-items: flex-start;
+    }
+    .draw-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 600px) {
-    .highlight-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    .prize-grid,
-    .history-prizes {
+@media (max-width: 500px) {
+    .draw-grid {
         grid-template-columns: 1fr;
     }
 }

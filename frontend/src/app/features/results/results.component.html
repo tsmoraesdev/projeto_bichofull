@@ -1,39 +1,73 @@
-<section class="page">
+<section class="history-page">
     <div class="page-header">
-        <h1>Resultados</h1>
-        <p>Acompanhe os sorteios mais recentes do sistema.</p>
+        <h1>Histórico</h1>
+        <p>Acompanhe seus ganhos, perdas, apostas realizadas e sorteios anteriores.</p>
     </div>
 
-    <div class="highlight-card">
-        <div class="highlight-header">
-            <h2>Último sorteio</h2>
-            <span>{{ ultimoSorteio.data }}</span>
+    <div class="summary-grid">
+        <div class="summary-card gain-card">
+            <span class="label">Total de ganhos</span>
+            <strong>R$ {{ totalGanhos | number:'1.2-2' }}</strong>
+            <small>{{ quantidadeGanhos }} aposta(s) premiada(s)</small>
         </div>
 
-        <div class="prize-grid">
-            <div class="prize-card" *ngFor="let premio of ultimoSorteio.premios; let i = index">
-                <small>{{ i + 1 }}º prêmio</small>
-                <strong>{{ premio }}</strong>
+        <div class="summary-card loss-card">
+            <span class="label">Total de perdas</span>
+            <strong>R$ {{ totalPerdas | number:'1.2-2' }}</strong>
+            <small>{{ quantidadePerdas }} aposta(s) perdida(s)</small>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Minhas apostas</h2>
+                <p>Veja tudo o que você já apostou e o resultado de cada uma.</p>
+            </div>
+
+            <div class="bet-history-list">
+                <div class="bet-history-item" *ngFor="let aposta of historicoApostas">
+                    <div class="bet-main">
+                        <strong>{{ aposta.tipo }}</strong>
+                        <p>Número: {{ aposta.numero }}</p>
+                        <small>Data: {{ aposta.data }}</small>
+                    </div>
+
+                    <div class="bet-side">
+                        <span>R$ {{ aposta.valor | number:'1.2-2' }}</span>
+
+                        <small class="status-badge" [ngClass]="{
+                'status-win': aposta.status === 'Ganhou',
+                'status-loss': aposta.status === 'Perdeu'
+              }">
+              {{ aposta.status }}
+            </small>
+
+                        <small class="prize-value" *ngIf="aposta.status === 'Ganhou'">
+              Prêmio: R$ {{ aposta.premio | number:'1.2-2' }}
+            </small>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="panel">
-        <div class="panel-header">
-            <h2>Histórico de resultados</h2>
-            <p>Veja os sorteios anteriores registrados.</p>
-        </div>
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Histórico dos sorteios</h2>
+                <p>Consulte os resultados anteriores realizados no sistema.</p>
+            </div>
 
-        <div class="history-list">
-            <div class="history-item" *ngFor="let resultado of historicoResultados">
-                <div class="history-top">
-                    <strong>{{ resultado.data }}</strong>
-                </div>
+            <div class="draw-history-list">
+                <div class="draw-history-item" *ngFor="let sorteio of historicoSorteios">
+                    <div class="draw-top">
+                        <strong>{{ sorteio.data }}</strong>
+                    </div>
 
-                <div class="history-prizes">
-                    <div class="mini-prize" *ngFor="let premio of resultado.premios; let i = index">
-                        <small>{{ i + 1 }}º</small>
-                        <span>{{ premio }}</span>
+                    <div class="draw-grid">
+                        <div class="draw-card" *ngFor="let premio of sorteio.premios; let i = index">
+                            <small>{{ i + 1 }}º prêmio</small>
+                            <strong>{{ premio }}</strong>
+                        </div>
                     </div>
                 </div>
             </div>

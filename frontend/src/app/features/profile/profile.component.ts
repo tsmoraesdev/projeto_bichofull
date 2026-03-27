@@ -12,9 +12,13 @@ export class ProfileComponent {
   usuario = {
     nome: 'Tatiane Santana',
     email: 'tatiane@email.com',
+    telefone: '(92) 99999-9999',
+    membroDesde: 'Março de 2026',
     saldo: 1000,
     apostasFeitas: 12,
     ganhos: 3,
-    membroDesde: 'Março de 2026'
+    perdas: 9,
+    totalGanho: 630,
+    totalPerdido: 95
   };
 }
