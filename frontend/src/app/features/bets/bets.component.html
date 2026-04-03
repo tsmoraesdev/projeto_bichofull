@@ -6,7 +6,7 @@
             <span>Saldo em conta:</span>
             <strong>R$ {{ saldo | number:'1.2-2' }}</strong>
 
-            <button class="money-button" (click)="adicionarDinheiro()">
+            <button class="money-button" type="button" (click)="adicionarDinheiro()">
         + Adicionar dinheiro
       </button>
         </div>
@@ -79,15 +79,15 @@
     <div class="panel">
         <div class="panel-header">
             <h2>Realizar sorteio de apostas</h2>
-            <p>Marque as apostas que você realmente deseja jogar.</p>
+            <p>Marque as apostas pendentes que você realmente deseja jogar.</p>
         </div>
 
-        <div class="empty-state" *ngIf="apostas.length === 0">
-            Nenhuma aposta registrada ainda.
+        <div class="empty-state" *ngIf="apostasPendentes.length === 0">
+            Nenhuma aposta pendente registrada.
         </div>
 
-        <div class="apostas-list" *ngIf="apostas.length > 0">
-            <div class="aposta-item" *ngFor="let aposta of apostas">
+        <div class="apostas-list" *ngIf="apostasPendentes.length > 0">
+            <div class="aposta-item" *ngFor="let aposta of apostasPendentes">
                 <div class="aposta-left">
                     <input type="checkbox" [(ngModel)]="aposta.selecionada" [name]="'selecionada_' + aposta.id" />
 
@@ -99,22 +99,18 @@
                 </div>
 
                 <div class="aposta-right">
-                    <small class="badge" [ngClass]="{
-              'badge-waiting': aposta.status === 'Aguardando',
-              'badge-win': aposta.status === 'Ganhou',
-              'badge-lose': aposta.status === 'Perdeu'
-            }">
+                    <small class="badge badge-waiting">
             {{ aposta.status }}
           </small>
 
-                    <button class="remove-button" (click)="removerAposta(aposta.id)">
+                    <button class="remove-button" type="button" (click)="removerAposta(aposta.id)">
             Remover
           </button>
                 </div>
             </div>
         </div>
 
-        <button class="primary-button sortear-button" (click)="sortear()">
+        <button class="primary-button sortear-button" type="button" (click)="sortear()" [disabled]="apostasPendentes.length === 0">
       Sortear
     </button>
     </div>

@@ -20,49 +20,48 @@ public class AuthController {
 
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUseCase loginUseCase;
-    private final JwtService jwtService; //
+    private final JwtService jwtService;
 
     public AuthController(RegisterUserUseCase registerUserUseCase,
                           LoginUseCase loginUseCase,
-                          JwtService jwtService) { //
-
+                          JwtService jwtService) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUseCase = loginUseCase;
-        this.jwtService = jwtService; //
+        this.jwtService = jwtService;
     }
-
-    /*@PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationDTO dto) {
-        System.out.println("Senha recebida: " + dto.getSenha());
-        return null;
-    }*/
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationDTO dto) {
-        User user = User.builder()
-                .nome(dto.getNome())
-                .email(dto.getEmail())
-                .senha(dto.getSenha())
-                .build();
+    public ResponseEntity<?> register(@RequestBody UserRegistrationDTO dto) {
+        try {
+            registerUserUseCase.execute(dto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Usuário registrado com sucesso!");
+        } catch (RuntimeException e) {
+            if ("Email já cadastrado.".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Email já cadastrado.");
+            }
 
-        registerUserUseCase.execute(user);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Usuário registrado com sucesso!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
-
-
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+        try {
+            User user = loginUseCase.execute(dto.getEmail(), dto.getSenha());
 
-        User user = loginUseCase.execute(dto.getEmail(), dto.getSenha());
+            String token = jwtService.generateToken(user.getEmail());
 
-        String token = jwtService.generateToken(user.getEmail());
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("nome", user.getNome());
 
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        response.put("nome", user.getNome());
-
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
+        }
     }
 }

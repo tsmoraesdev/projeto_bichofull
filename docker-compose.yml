@@ -1,44 +1,52 @@
-version: '3.8'
-
 services:
-  # Banco de Dados MySQL
-  database:
+  db:
     image: mysql:8.0
-    container_name: bicho_db
+    container_name: bichofull_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: bicho_database  # Nome do banco que será criado automaticamente
-      MYSQL_USER: bicho_user
-      MYSQL_PASSWORD: user_password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bichofull
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql # Persiste os dados mesmo se o container parar
+      - mysql_data:/var/lib/mysql
+      - ./database/geral.sql:/docker-entrypoint-initdb.d/01-geral.sql:ro
+      - ./database/animais.sql:/docker-entrypoint-initdb.d/02-animais.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
-  # Backend (Configuração de Desenvolvimento)
   backend:
-    build: ./backend
-    container_name: bicho_backend
-    volumes:
-      - ./backend:/app # Sincroniza seus arquivos locais com o container
-    ports:
-      - "5000:5000"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bichofull_backend
+    restart: always
     depends_on:
-      - database
-    tty: true # Mantém o container aberto mesmo se o código estiver incompleto
-
-  # Frontend (Configuração de Desenvolvimento)
-  frontend:
-    build: ./frontend
-    container_name: bicho_frontend
-    volumes:
-      - ./frontend:/app
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bichofull?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVER_PORT: 8080
+      JWT_SECRET: ACESSO_CHAVE_TESTE_PROJETO_BICHOFULL_2026
     ports:
-      - "3000:3000"
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bichofull_frontend
+    restart: always
     depends_on:
       - backend
-    tty: true
+    ports:
+      - "4200:4200"
 
 volumes:
-  db_data:
+  mysql_data:

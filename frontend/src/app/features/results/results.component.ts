@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { HistoryService } from '../../core/services/history.service';
+
+type StatusHistorico = 'Aguardando' | 'Ganhou' | 'Perdeu';
 
 interface HistoricoAposta {
   id: number;
@@ -7,7 +11,7 @@ interface HistoricoAposta {
   tipo: 'Grupo' | 'Dezena' | 'Milhar';
   numero: string;
   valor: number;
-  status: 'Ganhou' | 'Perdeu';
+  status: StatusHistorico;
   premio: number;
 }
 
@@ -23,78 +27,86 @@ interface Sorteio {
   templateUrl: './results.component.html',
   styleUrl: './results.component.scss'
 })
-export class ResultsComponent {
-  historicoApostas: HistoricoAposta[] = [
-    {
-      id: 1,
-      data: '26/03/2026',
-      tipo: 'Grupo',
-      numero: '05',
-      valor: 20,
-      status: 'Ganhou',
-      premio: 360
-    },
-    {
-      id: 2,
-      data: '25/03/2026',
-      tipo: 'Dezena',
-      numero: '45',
-      valor: 10,
-      status: 'Perdeu',
-      premio: 0
-    },
-    {
-      id: 3,
-      data: '24/03/2026',
-      tipo: 'Milhar',
-      numero: '1834',
-      valor: 5,
-      status: 'Perdeu',
-      premio: 0
-    },
-    {
-      id: 4,
-      data: '23/03/2026',
-      tipo: 'Grupo',
-      numero: '12',
-      valor: 15,
-      status: 'Ganhou',
-      premio: 270
+export class ResultsComponent implements OnInit, OnDestroy {
+  historicoApostas: HistoricoAposta[] = [];
+  historicoSorteios: Sorteio[] = [];
+
+  totalGanhos = 0;
+  totalPerdas = 0;
+  quantidadeGanhos = 0;
+  quantidadePerdas = 0;
+
+  private historicoSubscription?: Subscription;
+
+  constructor(private historyService: HistoryService) {}
+
+  ngOnInit(): void {
+    this.carregarHistorico();
+    this.historicoSubscription = this.historyService.historicoAtualizado$.subscribe(() => {
+      this.carregarHistorico();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.historicoSubscription?.unsubscribe();
+  }
+
+  carregarHistorico(): void {
+    this.historyService.buscarHistorico().subscribe({
+      next: (response) => {
+        this.totalGanhos = Number(response?.resumo?.total_ganhos ?? 0);
+        this.totalPerdas = Number(response?.resumo?.total_perdas ?? 0);
+        this.quantidadeGanhos = Number(response?.resumo?.apostas_premiadas ?? 0);
+        this.quantidadePerdas = Number(response?.resumo?.apostas_perdidas ?? 0);
+
+        this.historicoApostas = (response?.apostas ?? []).map((aposta: any) => ({
+          id: Number(aposta.id),
+          data: this.formatarData(aposta.data_aposta),
+          tipo: this.converterTipo(aposta.tipo_aposta),
+          numero: aposta.numero,
+          valor: Number(aposta.valor_apostado),
+          status: this.converterStatus(aposta.status),
+          premio: Number(aposta.premio ?? 0)
+        }));
+
+        this.historicoSorteios = (response?.sorteios ?? []).map((sorteio: any) => ({
+          data: this.formatarData(sorteio.data_sorteio),
+          premios: sorteio.premios ?? []
+        }));
+      },
+      error: (error) => {
+        console.error('Erro ao carregar histórico:', error);
+        this.historicoApostas = [];
+        this.historicoSorteios = [];
+        this.totalGanhos = 0;
+        this.totalPerdas = 0;
+        this.quantidadeGanhos = 0;
+        this.quantidadePerdas = 0;
+      }
+    });
+  }
+
+  private converterTipo(tipo: string): 'Grupo' | 'Dezena' | 'Milhar' {
+    if (tipo === 'GRUPO') return 'Grupo';
+    if (tipo === 'DEZENA') return 'Dezena';
+    return 'Milhar';
+  }
+
+  private converterStatus(status: string): StatusHistorico {
+    if (status === 'GANHOU') return 'Ganhou';
+    if (status === 'PERDEU') return 'Perdeu';
+    return 'Aguardando';
+  }
+
+  private formatarData(data: string): string {
+    if (!data) return '';
+
+    const dataObj = new Date(data);
+
+    if (isNaN(dataObj.getTime())) {
+      return data;
     }
-  ];
 
-  historicoSorteios: Sorteio[] = [
-    {
-      data: '26/03/2026',
-      premios: ['1834', '4521', '7788', '9012', '3345']
-    },
-    {
-      data: '25/03/2026',
-      premios: ['1122', '3344', '5566', '7788', '9900']
-    },
-    {
-      data: '24/03/2026',
-      premios: ['1456', '2389', '4501', '6723', '8899']
-    }
-  ];
-
-  get totalGanhos(): number {
-    return this.historicoApostas
-      .filter(aposta => aposta.status === 'Ganhou')
-      .reduce((total, aposta) => total + aposta.premio, 0);
-  }
-
-  get totalPerdas(): number {
-    return this.historicoApostas
-      .filter(aposta => aposta.status === 'Perdeu')
-      .reduce((total, aposta) => total + aposta.valor, 0);
-  }
-
-  get quantidadeGanhos(): number {
-    return this.historicoApostas.filter(aposta => aposta.status === 'Ganhou').length;
-  }
-
-  get quantidadePerdas(): number {
-    return this.historicoApostas.filter(aposta => aposta.status === 'Perdeu').length;
+    return dataObj.toLocaleDateString('pt-BR');
   }
 }

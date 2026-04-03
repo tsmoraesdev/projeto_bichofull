@@ -1,11 +1,10 @@
 package com.backend.backprojetobichofull.api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class UserRegistrationDTO {
+
     private String nome;
     private String email;
     private String senha;

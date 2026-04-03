@@ -2,7 +2,10 @@ package com.backend.backprojetobichofull.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -26,23 +29,31 @@ public class User {
     @Column(nullable = false)
     private String senha;
 
-    // RF03 - Novos usuários devem começar com um saldo fictício de R$ 1.000,00 
+    @Builder.Default
     @Column(nullable = false)
     private BigDecimal saldo = new BigDecimal("1000.00");
 
-    /**
-     * RN03 - O saldo nunca pode ficar negativo.
-     * Este método encapsula a lógica de negócio para débito.
-     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = false)
+    @Builder.Default
+    private List<Bet> apostas = new ArrayList<>();
+
     public void debitarSaldo(BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("O valor da aposta deve ser maior que zero.");
+        }
+
         if (this.saldo.compareTo(valor) < 0) {
             throw new RuntimeException("Saldo insuficiente para realizar a aposta.");
         }
+
         this.saldo = this.saldo.subtract(valor);
     }
 
     public void creditarSaldo(BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("O valor de crédito deve ser maior que zero.");
+        }
+
         this.saldo = this.saldo.add(valor);
     }
-
-    }
+}

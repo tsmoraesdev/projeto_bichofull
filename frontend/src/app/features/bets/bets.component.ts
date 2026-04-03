@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BetsService } from '../../core/services/bets.service';
+import { HistoryService } from '../../core/services/history.service';
 
 type TipoAposta = 'Grupo' | 'Dezena' | 'Milhar';
+type StatusApostaExibicao = 'Aguardando' | 'Ganhou' | 'Perdeu';
 
 interface Aposta {
   id: number;
@@ -10,7 +13,7 @@ interface Aposta {
   numero: string;
   valor: number;
   selecionada: boolean;
-  status: 'Aguardando' | 'Ganhou' | 'Perdeu';
+  status: StatusApostaExibicao;
   premio?: number;
 }
 
@@ -26,16 +29,14 @@ interface Animal {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './bets.component.html',
-  styleUrl: './bets.component.scss'
+  styleUrls: ['./bets.component.scss']
 })
-export class BetsComponent {
+export class BetsComponent implements OnInit {
   saldo = 1000;
 
   tipoAposta: TipoAposta = 'Grupo';
   numero = '';
-  valor = 0;
-
-  proximoId = 1;
+  valor: number | null = null;
 
   apostas: Aposta[] = [];
   ultimoSorteio: string[] = [];
@@ -69,99 +70,136 @@ export class BetsComponent {
     { nome: 'Vaca', grupo: '25', dezenas: ['97', '98', '99', '00'], imagem: '/vaca.png' }
   ];
 
-  adicionarDinheiro() {
+  constructor(
+    private betsService: BetsService,
+    private historyService: HistoryService
+  ) {}
+
+  ngOnInit(): void {
+    this.carregarApostas();
+  }
+
+  get apostasPendentes(): Aposta[] {
+    return this.apostas.filter(aposta => aposta.status === 'Aguardando');
+  }
+
+  adicionarDinheiro(): void {
     this.saldo += 100;
     alert('R$ 100,00 adicionados ao saldo.');
   }
 
-  registrarAposta() {
-    if (!this.numero.trim() || this.valor <= 0) {
+  registrarAposta(): void {
+    const numeroDigitado = String(this.numero ?? '').trim();
+    const valorNumerico = Number(this.valor);
+
+    if (!numeroDigitado || !Number.isFinite(valorNumerico) || valorNumerico <= 0) {
       alert('Preencha corretamente número e valor da aposta.');
       return;
     }
 
-    if (this.valor > this.saldo) {
-      alert('Saldo insuficiente para registrar essa aposta.');
-      return;
-    }
-
-    const numeroFormatado = this.formatarNumero(this.numero, this.tipoAposta);
+    const numeroFormatado = this.formatarNumero(numeroDigitado, this.tipoAposta);
 
     if (!numeroFormatado) {
       alert('Número inválido para o tipo de aposta escolhido.');
       return;
     }
 
-    this.apostas.unshift({
-      id: this.proximoId++,
-      tipo: this.tipoAposta,
-      numero: numeroFormatado,
-      valor: this.valor,
-      selecionada: false,
-      status: 'Aguardando',
-      premio: 0
+    const payload = {
+      tipo_aposta: this.tipoAposta.toUpperCase(),
+      palpite: numeroFormatado,
+      valor_apostado: valorNumerico
+    };
+
+    this.betsService.registrarAposta(payload).subscribe({
+      next: (response) => {
+        this.numero = '';
+        this.valor = null;
+        this.ultimoSorteio = [];
+        this.mensagemResultado = 'Aposta registrada com sucesso!';
+        this.saldo = Number(response.saldo_atual ?? this.saldo);
+
+        this.carregarApostas();
+        this.historyService.notificarAtualizacao();
+      },
+      error: (err) => {
+        alert(this.extrairMensagemErro(err, 'Erro ao registrar aposta'));
+      }
     });
-
-    this.numero = '';
-    this.valor = 0;
   }
 
-  removerAposta(id: number) {
-    this.apostas = this.apostas.filter(aposta => aposta.id !== id);
+  removerAposta(id: number): void {
+    this.betsService.removerAposta(id).subscribe({
+      next: (response) => {
+        this.saldo = Number(response?.saldo_atual ?? this.saldo);
+        this.mensagemResultado = response?.mensagem ?? 'Aposta removida com sucesso.';
+        this.carregarApostas();
+        this.historyService.notificarAtualizacao();
+      },
+      error: (err) => {
+        alert(this.extrairMensagemErro(err, 'Erro ao remover aposta'));
+      }
+    });
   }
 
-  sortear() {
-    const selecionadas = this.apostas.filter(aposta => aposta.selecionada);
+  sortear(): void {
+    const selecionadas = this.apostasPendentes.filter(aposta => aposta.selecionada);
 
     if (selecionadas.length === 0) {
-      alert('Selecione pelo menos uma aposta para realizar o sorteio.');
+      alert('Selecione pelo menos uma aposta.');
       return;
     }
 
-    const valorTotal = selecionadas.reduce((total, aposta) => total + aposta.valor, 0);
+    const apostaIds = selecionadas.map(aposta => aposta.id);
 
-    if (valorTotal > this.saldo) {
-      alert('Saldo insuficiente para realizar o sorteio dessas apostas.');
-      return;
-    }
+    this.betsService.sortearApostas({ apostaIds }).subscribe({
+      next: (response) => {
+        this.ultimoSorteio = Array.isArray(response?.ultimo_sorteio)
+          ? response.ultimo_sorteio
+          : [];
 
-    this.saldo -= valorTotal;
-    this.ultimoSorteio = this.gerarSorteio();
+        this.saldo = Number(response?.saldo_atual ?? this.saldo);
+        this.mensagemResultado = response?.mensagem || '';
 
-    let totalPremio = 0;
-    let ganhouAlguma = false;
-
-    this.apostas = this.apostas.map(aposta => {
-      if (!aposta.selecionada) return aposta;
-
-      const ganhou = this.verificarResultado(aposta);
-      const premio = ganhou ? this.calcularPremio(aposta) : 0;
-
-      if (ganhou) {
-        ganhouAlguma = true;
-        totalPremio += premio;
+        this.carregarApostas();
+        this.historyService.notificarAtualizacao();
+      },
+      error: (err) => {
+        alert(this.extrairMensagemErro(err, 'Erro ao realizar sorteio'));
       }
-
-      return {
-        ...aposta,
-        status: ganhou ? 'Ganhou' : 'Perdeu',
-        premio,
-        selecionada: false
-      };
     });
+  }
 
-    this.saldo += totalPremio;
+  carregarApostas(): void {
+    this.betsService.listarMinhasApostas().subscribe({
+      next: (response) => {
+        const lista = Array.isArray(response) ? response : [];
 
-    if (ganhouAlguma) {
-      this.mensagemResultado = `Parabéns! Você ganhou R$ ${totalPremio.toFixed(2)}.`;
-    } else {
-      this.mensagemResultado = 'Nenhuma aposta foi premiada neste sorteio.';
-    }
+        this.apostas = lista.map((item: any) => ({
+          id: Number(item.id),
+          tipo: this.converterTipoExibicao(item.tipo_aposta),
+          numero: item.palpite,
+          valor: Number(item.valor_apostado),
+          selecionada: false,
+          status: this.converterStatusExibicao(item.status),
+          premio: Number(item.premio ?? 0)
+        }));
+
+        if (lista.length > 0) {
+          this.saldo = Number(lista[0].saldo_atual ?? this.saldo);
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar apostas:', err);
+      }
+    });
   }
 
   get animalPreview(): Animal | null {
     const numeroFormatado = this.formatarNumero(this.numero, this.tipoAposta);
-    if (!numeroFormatado) return null;
+
+    if (!numeroFormatado) {
+      return null;
+    }
 
     if (this.tipoAposta === 'Grupo') {
       return this.animais.find(animal => animal.grupo === numeroFormatado) || null;
@@ -171,80 +209,89 @@ export class BetsComponent {
       return this.animais.find(animal => animal.dezenas.includes(numeroFormatado)) || null;
     }
 
-    if (this.tipoAposta === 'Milhar') {
-      const dezenaFinal = numeroFormatado.slice(-2);
-      return this.animais.find(animal => animal.dezenas.includes(dezenaFinal)) || null;
-    }
-
-    return null;
+    const dezenaFinal = numeroFormatado.slice(-2);
+    return this.animais.find(animal => animal.dezenas.includes(dezenaFinal)) || null;
   }
 
   get estimativaGanho(): number {
-    if (this.valor <= 0) return 0;
+    const valorNumerico = Number(this.valor);
 
-    if (this.tipoAposta === 'Grupo') return this.valor * 18;
-    if (this.tipoAposta === 'Dezena') return this.valor * 60;
-    return this.valor * 400;
-  }
-
-  private gerarSorteio(): string[] {
-    const premios: string[] = [];
-
-    for (let i = 0; i < 5; i++) {
-      const numero = Math.floor(Math.random() * 10000)
-        .toString()
-        .padStart(4, '0');
-      premios.push(numero);
+    if (!Number.isFinite(valorNumerico) || valorNumerico <= 0) {
+      return 0;
     }
 
-    return premios;
-  }
-
-  private verificarResultado(aposta: Aposta): boolean {
-    const primeiroPremio = this.ultimoSorteio[0];
-
-    if (aposta.tipo === 'Milhar') {
-      return primeiroPremio === aposta.numero;
+    if (this.tipoAposta === 'Grupo') {
+      return valorNumerico * 18;
     }
 
-    if (aposta.tipo === 'Dezena') {
-      return primeiroPremio.slice(-2) === aposta.numero;
+    if (this.tipoAposta === 'Dezena') {
+      return valorNumerico * 60;
     }
 
-    if (aposta.tipo === 'Grupo') {
-      const dezena = Number(primeiroPremio.slice(-2));
-      const grupoSorteado = dezena === 0 ? 25 : Math.ceil(dezena / 4);
-      return grupoSorteado === Number(aposta.numero);
-    }
-
-    return false;
-  }
-
-  private calcularPremio(aposta: Aposta): number {
-    if (aposta.tipo === 'Grupo') return aposta.valor * 18;
-    if (aposta.tipo === 'Dezena') return aposta.valor * 60;
-    return aposta.valor * 400;
+    return valorNumerico * 400;
   }
 
   private formatarNumero(numero: string, tipo: TipoAposta): string | null {
-    const apenasNumeros = numero.replace(/\D/g, '');
+    const apenasNumeros = String(numero ?? '').replace(/\D/g, '');
+
+    if (!apenasNumeros) {
+      return null;
+    }
 
     if (tipo === 'Grupo') {
       const grupo = Number(apenasNumeros);
-      if (grupo < 1 || grupo > 25) return null;
+
+      if (!Number.isInteger(grupo) || grupo < 1 || grupo > 25) {
+        return null;
+      }
+
       return grupo.toString().padStart(2, '0');
     }
 
     if (tipo === 'Dezena') {
-      if (apenasNumeros.length < 1 || apenasNumeros.length > 2) return null;
+      if (apenasNumeros.length < 1 || apenasNumeros.length > 2) {
+        return null;
+      }
+
       return apenasNumeros.padStart(2, '0');
     }
 
     if (tipo === 'Milhar') {
-      if (apenasNumeros.length < 1 || apenasNumeros.length > 4) return null;
+      if (apenasNumeros.length < 1 || apenasNumeros.length > 4) {
+        return null;
+      }
+
       return apenasNumeros.padStart(4, '0');
     }
 
     return null;
+  }
+
+  private converterTipoExibicao(tipo: string): TipoAposta {
+    if (tipo === 'GRUPO') return 'Grupo';
+    if (tipo === 'DEZENA') return 'Dezena';
+    return 'Milhar';
+  }
+
+  private converterStatusExibicao(status: string): StatusApostaExibicao {
+    if (status === 'GANHOU') return 'Ganhou';
+    if (status === 'PERDEU') return 'Perdeu';
+    return 'Aguardando';
+  }
+
+  private extrairMensagemErro(err: any, fallback: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    if (typeof err?.error?.message === 'string' && err.error.message.trim()) {
+      return err.error.message;
+    }
+
+    if (typeof err?.message === 'string' && err.message.trim()) {
+      return err.message;
+    }
+
+    return fallback;
   }
 }

@@ -27,7 +27,8 @@ public class UserController {
         return new UserResponseDTO(
                 user.getId(),
                 user.getNome(),
-                user.getEmail()
+                user.getEmail(),
+                user.getSaldo()
         );
     }
 }
