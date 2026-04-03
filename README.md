@@ -1,6 +1,7 @@
 # BichoFull
 
 Sistema web de apostas inspirado no jogo do bicho, com frontend em Angular, backend em Spring Boot e banco MySQL.
+PROJETO EM DESENVOLVIMENTO
 
 ## Tecnologias
 
@@ -142,3 +143,4 @@ Exemplos:
 - criar perfil Docker de produção mais enxuto
 - adicionar healthcheck mais completo para a API
 - documentar exemplos de requisições no Swagger/Postman
+- corrigir bugs 
